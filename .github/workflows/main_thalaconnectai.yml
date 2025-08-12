@@ -69,3 +69,4 @@ jobs:
           app-name: 'ThalaConnectAI'
           slot-name: 'Production'
           package: .
+###
