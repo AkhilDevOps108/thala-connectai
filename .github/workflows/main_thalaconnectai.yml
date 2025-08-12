@@ -24,11 +24,10 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      - name: Azure Login
+        uses: azure/login@v2
         with:
-          name: dist
-          path: dist
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
