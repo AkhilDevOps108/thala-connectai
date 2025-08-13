@@ -1,4 +1,4 @@
-name: Build and Deploy Node.js app to Azure Web App - ThalaConnectAI
+name: Build and Deploy Vite React app to Azure Web App - ThalaConnectAI
 
 on:
   push:
@@ -26,15 +26,15 @@ jobs:
       # Install dependencies & build
       - name: Install dependencies and build
         run: |
-          npm install
-          npm run build --if-present
-          npm run test --if-present
-      # Upload the build output
+          npm ci
+          npm run build
+          
+      # Upload only the build output (dist folder)
       - name: Upload artifact for deployment
         uses: actions/upload-artifact@v4
         with:
-          name: node-app
-          path: .
+          name: vite-build
+          path: dist/
 
   deploy:
     runs-on: ubuntu-latest
@@ -44,11 +44,12 @@ jobs:
       contents: read
 
     steps:
-      # Download the artifact from the build job
+      # Download the build artifact
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: node-app
+          name: vite-build
+          path: dist
 
       # Azure Login
       - name: Azure Login
@@ -58,11 +59,10 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_16E64882A0E64DC38025CCDF1229EB58 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_5E94B7F77EC94657ABE52AEB06711307 }}
 
-      # Deploy to Azure Web App
+      # Deploy to Azure Web App (deploy dist folder)
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'ThalaConnectAI'
           slot-name: 'Production'
-          package: .
-###
+          package: dist
